@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html { scroll-behavior: smooth; }
+body { @apply bg-bg text-ink font-body antialiased; }
+h1, h2, h3, h4 { @apply font-display; letter-spacing: -0.01em; }
+
+:focus-visible {
+  outline: 2px solid theme('colors.blue');
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* the tricolour "pulse" hairline motif used across the product */
+.pulse-rule {
+  height: 3px;
+  width: 100%;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    theme('colors.saffron') 0%,
+    theme('colors.saffron') 32%,
+    theme('colors.ink') 32%,
+    theme('colors.ink') 36%,
+    theme('colors.green') 36%,
+    theme('colors.green') 68%,
+    transparent 68%
+  );
+  opacity: 0.9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
+}

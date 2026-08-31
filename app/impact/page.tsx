@@ -11,7 +11,7 @@ export default async function ImpactPage() {
   ]);
 
   const avgScore = areas.length
-    ? Math.round(areas.reduce((sum, a) => sum + a.score, 0) / areas.length)
+    ? Math.round(areas.reduce((sum, a: any) => sum + a.score, 0) / areas.length)
     : 0;
 
   return (

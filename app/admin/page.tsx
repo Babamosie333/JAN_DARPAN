@@ -14,7 +14,7 @@ async function getStats() {
   ]);
 
   const avgScore = areas.length
-    ? Math.round(areas.reduce((sum, a) => sum + a.score, 0) / areas.length)
+    ? Math.round(areas.reduce((sum, a: any) => sum + a.score, 0) / areas.length)
     : 0;
 
   return { totalIssues, resolvedIssues, activeIssues, avgScore, citizens, areaCount: areas.length };

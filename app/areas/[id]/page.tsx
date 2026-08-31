@@ -6,8 +6,9 @@ import Issue from "@/models/Issue";
 
 export default async function AreaDetailPage({ params }: { params: { id: string } }) {
   await connectDB();
-  const area = await Area.findOne({ id: params.id }).lean();
-  if (!area) notFound();
+  const areaDoc = await Area.findOne({ id: params.id }).lean();
+  if (!areaDoc) notFound();
+  const area = areaDoc as any;
 
   const issues = JSON.parse(
     JSON.stringify(

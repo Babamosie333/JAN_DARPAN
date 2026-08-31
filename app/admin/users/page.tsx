@@ -6,7 +6,7 @@ import AdminUsersTable from "@/components/admin/AdminUsersTable";
 export default async function AdminUsersPage() {
   const { data: clerkUsers } = await clerkClient.users.getUserList({ limit: 200 });
   await connectDB();
-  const profiles = await CitizenProfile.find({}).lean();
+  const profiles = (await CitizenProfile.find({}).lean()) as any[];
   const profileMap = new Map(profiles.map((p) => [p.clerkId, p]));
 
   const users = clerkUsers.map((u) => ({

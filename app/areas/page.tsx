@@ -1,35 +1,22 @@
-import Link from "next/link";
 import { connectDB } from "@/lib/mongodb";
 import Area from "@/models/Area";
+import AreasExplorer from "@/components/AreasExplorer";
 
 export default async function AreasPage() {
   await connectDB();
   const areas = JSON.parse(JSON.stringify(await Area.find({}).sort({ score: -1 }).lean()));
 
   return (
-    <section className="max-w-[1180px] mx-auto px-6 py-14">
-      <h1 className="text-3xl font-extrabold mb-2">Explore Areas</h1>
-      <p className="text-ink-soft mb-8">Civic health scores across Kanpur wards.</p>
-
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {areas.map((area: any) => (
-          <Link
-            key={area.id}
-            href={`/areas/${area.id}`}
-            className="block bg-bg-raised border border-line rounded-md p-5 shadow-sm hover:shadow-md transition"
-          >
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="font-bold text-lg">{area.name}</h3>
-              <span className="font-mono font-bold text-2xl">{area.score}</span>
-            </div>
-            <div className="text-xs text-ink-faint mb-3">{area.city}</div>
-            <div className="flex justify-between text-sm text-ink-soft">
-              <span>{area.activeIssues} active issues</span>
-              <span className="text-green-ink font-semibold">+{area.delta}</span>
-            </div>
-          </Link>
-        ))}
-      </div>
+    <section className="max-w-[1180px] mx-auto px-4 md:px-6 py-14">
+      <span className="text-xs font-mono uppercase tracking-widest text-green-ink bg-green-tint px-3 py-1.5 rounded-pill">
+        Explore Areas
+      </span>
+      <h1 className="text-3xl font-extrabold mt-3 mb-2">Explore Kanpur</h1>
+      <p className="text-ink-soft mb-8 max-w-xl">
+        Know your neighbourhood. Understand what needs attention — and what&apos;s already
+        improving.
+      </p>
+      <AreasExplorer areas={areas} />
     </section>
   );
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import ImageLightbox from "@/components/ImageLightbox";
 
 type Issue = {
   _id: string;
@@ -13,6 +14,7 @@ type Issue = {
   status: string;
   confirms: number;
   createdAt: string;
+  photo?: string | null;
 };
 
 const STATUS_OPTIONS = ["reported", "in-progress", "resolved", "rejected"];
@@ -24,11 +26,19 @@ const STATUS_STYLES: Record<string, string> = {
   rejected: "bg-red-tint text-red",
 };
 
+const SEVERITY_STYLES: Record<string, string> = {
+  Low: "text-ink-faint",
+  Moderate: "text-saffron-ink",
+  High: "text-red",
+  Critical: "text-red font-bold",
+};
+
 export default function AdminIssuesTable({ initialIssues }: { initialIssues: Issue[] }) {
   const [issues, setIssues] = useState(initialIssues);
   const [filterStatus, setFilterStatus] = useState("all");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [lightboxSrc, setLightboxSrc] = useState<string | null>(null);
 
   const visible = filterStatus === "all" ? issues : issues.filter((i) => i.status === filterStatus);
 
@@ -68,11 +78,11 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
   return (
     <div>
       <div className="flex items-center gap-2 mb-4">
-        <label className="text-sm text-ink-soft">Filter:</label>
+        <label className="text-sm font-medium text-ink-soft">Filter by status</label>
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="border border-line rounded-sm px-2 py-1 text-sm bg-bg-raised"
+          className="border border-line rounded-pill px-3 py-1.5 text-sm bg-bg-raised"
         >
           <option value="all">All</option>
           {STATUS_OPTIONS.map((s) => (
@@ -81,6 +91,7 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
             </option>
           ))}
         </select>
+        <span className="text-xs text-ink-faint ml-auto">{visible.length} issues</span>
       </div>
 
       {error && (
@@ -89,10 +100,11 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
         </div>
       )}
 
-      <div className="overflow-x-auto border border-line rounded-md bg-bg-raised">
+      <div className="overflow-x-auto border border-line rounded-md bg-bg-raised shadow-sm">
         <table className="w-full text-sm">
           <thead>
-            <tr className="text-left text-ink-faint uppercase text-xs tracking-wide border-b border-line">
+            <tr className="text-left text-ink-faint uppercase text-[11px] tracking-wide border-b border-line bg-line-soft/50">
+              <th className="p-3 w-14"></th>
               <th className="p-3">Issue</th>
               <th className="p-3">Area</th>
               <th className="p-3">Severity</th>
@@ -104,13 +116,29 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
           </thead>
           <tbody>
             {visible.map((issue) => (
-              <tr key={issue._id} className="border-b border-line-soft last:border-0">
+              <tr key={issue._id} className="border-b border-line-soft last:border-0 hover:bg-line-soft/30">
+                <td className="p-3">
+                  {issue.photo ? (
+                    <button
+                      type="button"
+                      onClick={() => setLightboxSrc(issue.photo!)}
+                      className="block w-10 h-10 rounded-sm overflow-hidden border border-line hover:opacity-80 transition"
+                      title="Click to view full size"
+                    >
+                      <img src={issue.photo} alt={issue.title} className="w-full h-full object-cover" />
+                    </button>
+                  ) : (
+                    <div className="w-10 h-10 rounded-sm bg-line-soft flex items-center justify-center text-ink-faint text-xs">
+                      —
+                    </div>
+                  )}
+                </td>
                 <td className="p-3">
                   <div className="font-medium">{issue.title}</div>
                   <div className="text-ink-faint text-xs">{issue.location}</div>
                 </td>
-                <td className="p-3">{issue.areaId}</td>
-                <td className="p-3">{issue.severity}</td>
+                <td className="p-3 capitalize">{issue.areaId.replace("-", " ")}</td>
+                <td className={`p-3 ${SEVERITY_STYLES[issue.severity] ?? ""}`}>{issue.severity}</td>
                 <td className="p-3 font-mono">{issue.priority}</td>
                 <td className="p-3 font-mono">{issue.confirms}</td>
                 <td className="p-3">
@@ -118,7 +146,7 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
                     value={issue.status}
                     disabled={busyId === issue._id}
                     onChange={(e) => updateStatus(issue._id, e.target.value)}
-                    className={`rounded-pill px-2 py-1 text-xs font-semibold border-0 ${STATUS_STYLES[issue.status]}`}
+                    className={`rounded-pill px-2.5 py-1 text-xs font-semibold border-0 ${STATUS_STYLES[issue.status]}`}
                   >
                     {STATUS_OPTIONS.map((s) => (
                       <option key={s} value={s}>
@@ -140,7 +168,7 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
             ))}
             {visible.length === 0 && (
               <tr>
-                <td colSpan={7} className="p-6 text-center text-ink-faint">
+                <td colSpan={8} className="p-6 text-center text-ink-faint">
                   No issues match this filter.
                 </td>
               </tr>
@@ -148,6 +176,8 @@ export default function AdminIssuesTable({ initialIssues }: { initialIssues: Iss
           </tbody>
         </table>
       </div>
+
+      <ImageLightbox src={lightboxSrc} onClose={() => setLightboxSrc(null)} />
     </div>
   );
 }

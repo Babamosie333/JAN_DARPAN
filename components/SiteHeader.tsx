@@ -11,6 +11,7 @@ const NAV = [
   { href: "/areas", label: "Explore Areas" },
   { href: "/issues", label: "Issues" },
   { href: "/impact", label: "Impact" },
+  { href: "/about", label: "About" },
 ];
 
 export default function SiteHeader() {

@@ -40,16 +40,16 @@ export default function SiteHeader() {
           </span>
         </Link>
 
-        <nav className="hidden md:flex items-center gap-6 text-sm font-medium">
+        <nav className="hidden md:flex items-center gap-1 text-sm font-medium">
           {NAV.map((item) => (
             <Link
               key={item.href}
               href={item.href}
-              className={
+              className={`px-3 py-1.5 rounded-pill transition-colors ${
                 pathname === item.href
-                  ? "text-green-ink"
-                  : "text-ink-soft hover:text-ink transition-colors"
-              }
+                  ? "text-green-ink bg-green-tint"
+                  : "text-ink-soft hover:text-ink hover:bg-line-soft"
+              }`}
             >
               {item.label}
             </Link>
